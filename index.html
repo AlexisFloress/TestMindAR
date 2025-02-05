@@ -6,55 +6,27 @@
   </head>
   <body>
     <a-scene 
-      mindar-image="imageTargetSrc: assets/card.mind;" 
-      color-space="sRGB" 
-      renderer="colorManagement: true, physicallyCorrectLights"
-      vr-mode-ui="enabled: false" 
-      device-orientation-permission-ui="enabled: false"
-    >
+        mindar-image="imageTargetSrc: assets/card.mind;" 
+        color-space="sRGB" 
+        renderer="colorManagement: true, physicallyCorrectLights" 
+        vr-mode-ui="enabled: false" 
+        device-orientation-permission-ui="enabled: false">
       <a-assets>
-        <a-asset-item id="scene" src="assets/scene.glb"></a-asset-item>
+	  <!--<img id="card" src="assets/card.png" />-->
+	  <a-asset-item id="scene" src="assets/scene.glb"></a-asset-item>
       </a-assets>
-
-      <!-- Modelo que se mostrará fijo -->
-      <a-entity id="modelo-fijo" visible="false">
-        <a-gltf-model 
-          src="#scene"
-          rotation="0 180 0" 
-          position="0 0 0" 
-          scale="1 1 1"
-        ></a-gltf-model>
-      </a-entity>
 
       <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
-      <a-entity 
-        mindar-image-target="targetIndex: 0" 
-        id="target"
-      ></a-entity>
-
-      <script>
-        const target = document.querySelector("#target");
-        const modeloFijo = document.querySelector("#modelo-fijo");
-
-        target.addEventListener("targetFound", () => {
-          // Esperar un ciclo de render para asegurar que las posiciones sean correctas
-          setTimeout(() => {
-            const targetPos = target.object3D.getWorldPosition(new THREE.Vector3());
-            const targetRot = target.object3D.getWorldQuaternion(new THREE.Quaternion());
-
-            // Actualizar la posición y orientación del modelo
-            modeloFijo.object3D.position.copy(targetPos);
-            modeloFijo.object3D.setRotationFromQuaternion(targetRot);
-            modeloFijo.setAttribute("visible", true);
-          }, 0);
-        });
-
-        target.addEventListener("targetLost", () => {
-          // Si deseas ocultarlo al perder el marcador
-          // modeloFijo.setAttribute("visible", false);
-        });
-      </script>
+      <a-entity mindar-image-target="targetIndex: 0">
+        <!--<a-plane src="#card" position="0 0 0" height="2" width="1" rotation="0 0 0"></a-plane>-->
+        <a-gltf-model 
+	src="#scene"
+        rotation="0 180 0 " 
+        position="0 0 0.1"       
+  	scale="1 1 1" 
+        >
+      </a-entity>
     </a-scene>
   </body>
 </html>
