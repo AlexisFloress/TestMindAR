@@ -5,23 +5,57 @@
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
   </head>
   <body>
-    <a-scene mindar-image="imageTargetSrc: assets/card.mind;" color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
+    <a-scene 
+      mindar-image="imageTargetSrc: assets/card.mind;" 
+      color-space="sRGB" 
+      renderer="colorManagement: true, physicallyCorrectLights"
+      vr-mode-ui="enabled: false" 
+      device-orientation-permission-ui="enabled: false"
+    >
       <a-assets>
-	  <!--<img id="card" src="assets/card.png" />-->
-	  <a-asset-item id="scene" src="assets/scene.glb"></a-asset-item>
+        <a-asset-item id="scene" src="assets/scene.glb"></a-asset-item>
       </a-assets>
+
+      <!-- Modelo oculto inicialmente -->
+      <a-entity id="modelo-fijo" visible="false">
+        <a-gltf-model 
+          src="#scene"
+          rotation="0 180 0" 
+          position="0 0 0" 
+          scale="1 1 1"
+        ></a-gltf-model>
+      </a-entity>
 
       <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
-      <a-entity mindar-image-target="targetIndex: 0">
-        <!--<a-plane src="#card" position="0 0 0" height="2" width="1" rotation="0 0 0"></a-plane>-->
-        <a-gltf-model 
-	src="#scene"
-        rotation="0 180 0 " 
-        position="0 0 0.1"       
-  	scale="1 1 1" 
-        >
-      </a-entity>
+      <a-entity 
+        mindar-image-target="targetIndex: 0; detachedMode: true" 
+        id="target"
+      ></a-entity>
+
+      <!-- Script de control -->
+      <script>
+        const scene = document.querySelector("a-scene");
+        const target = document.querySelector("#target");
+        const modeloFijo = document.querySelector("#modelo-fijo");
+
+        // Cuando se detecta el marcador
+        target.addEventListener("targetFound", () => {
+          // Captura la posición/orientación del target
+          const targetPos = target.object3D.getWorldPosition();
+          const targetRot = target.object3D.getWorldRotation();
+          
+          // Actualiza el modelo fijo
+          modeloFijo.object3D.position.copy(targetPos);
+          modeloFijo.object3D.rotation.copy(targetRot);
+          modeloFijo.setAttribute("visible", true);
+        });
+
+        // Opcional: Resetear al perder el target
+        target.addEventListener("targetLost", () => {
+          // modeloFijo.setAttribute("visible", false); // Descomenta si quieres ocultarlo
+        });
+      </script>
     </a-scene>
   </body>
 </html>
